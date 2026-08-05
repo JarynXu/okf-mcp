@@ -1,0 +1,19 @@
+{
+  "name": "@open-knowledge-stack/okf-mcp",
+  "version": "0.1.0-alpha.1",
+  "description": "MCP stdio server for Open Knowledge Format bundles",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": { "okf-mcp": "src/server.mjs" },
+  "files": ["src", "README.md", "LICENSE", "NOTICE"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "lint": "node --check src/*.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check": "npm run lint && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open-knowledge-stack/okf-mcp.git"
+  }
+}
