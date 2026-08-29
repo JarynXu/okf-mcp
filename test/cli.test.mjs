@@ -22,14 +22,17 @@ test("builds stable Library-aware search arguments", () => {
   ]);
 });
 
-test("builds Library management CLI arguments with an explicit registry", () => {
+test("builds Library mount arguments with reviewed provider approvals", () => {
   const invocation = buildCliInvocation("okf_library_mount", {
     registry: "state/libraries.json",
-    id: "mcx"
+    id: "mcx",
+    allowProviders: ["process", "http"]
   }, { OKF_CLI_PATH: "custom-okf" });
   assert.equal(invocation.executable, "custom-okf");
   assert.ok(invocation.args.includes("--registry"));
-  assert.deepEqual(invocation.args.slice(-3), ["library", "mount", "mcx"]);
+  assert.deepEqual(invocation.args.slice(-7), [
+    "library", "mount", "mcx", "--allow-provider", "process", "--allow-provider", "http"
+  ]);
 });
 
 test("executes a CLI override and parses its envelope", { skip: process.platform === "win32" }, () => {
