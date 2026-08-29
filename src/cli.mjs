@@ -5,6 +5,11 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
   const bundle = path.resolve(args.bundle ?? environment.OKF_BUNDLE ?? process.cwd());
   const command = ["--bundle", bundle, "--output", "json"];
 
+  if (name.startsWith("okf_library_")) {
+    const registry = path.resolve(args.registry ?? environment.OKF_REGISTRY ?? path.join(process.cwd(), ".okf", "libraries.json"));
+    command.push("--registry", registry);
+  }
+
   switch (name) {
     case "okf_validate":
       command.push("validate");
@@ -30,6 +35,39 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
     case "okf_graph":
       command.push("graph");
       if (args.id) command.push("--id", String(args.id));
+      break;
+    case "okf_library_add":
+      command.push("library", "add", requiredString(args, "source"));
+      if (args.id) command.push("--id", String(args.id));
+      if (args.name) command.push("--name", String(args.name));
+      if (args.reference) command.push("--ref", String(args.reference));
+      break;
+    case "okf_library_update":
+      command.push("library", "update", requiredString(args, "id"));
+      break;
+    case "okf_library_remove":
+      command.push("library", "remove", requiredString(args, "id"));
+      break;
+    case "okf_library_mount":
+      command.push("library", "mount", requiredString(args, "id"));
+      break;
+    case "okf_library_unmount":
+      command.push("library", "unmount", requiredString(args, "id"));
+      break;
+    case "okf_library_list":
+      command.push("library", "list");
+      break;
+    case "okf_library_catalog":
+      command.push("library", "catalog");
+      if (args.id) command.push(String(args.id));
+      break;
+    case "okf_library_read":
+      command.push("library", "read", requiredString(args, "uri"));
+      break;
+    case "okf_library_query":
+      command.push("library", "query", requiredString(args, "query"));
+      if (args.library) command.push("--library", String(args.library));
+      if (args.limit !== undefined) command.push("--limit", String(args.limit));
       break;
     default:
       throw new Error(`Unknown OKF tool: ${name}`);
