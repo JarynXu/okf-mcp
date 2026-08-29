@@ -21,7 +21,21 @@ test("supports modern discovery and legacy initialization", () => {
 test("lists tools deterministically with valid object schemas", () => {
   const response = handleMessage(request(1, "tools/list"));
   assert.deepEqual(response.result.tools.map((tool) => tool.name), [
-    "okf_validate", "okf_list", "okf_get", "okf_inspect", "okf_search", "okf_graph"
+    "okf_validate",
+    "okf_list",
+    "okf_get",
+    "okf_inspect",
+    "okf_search",
+    "okf_graph",
+    "okf_library_add",
+    "okf_library_update",
+    "okf_library_remove",
+    "okf_library_mount",
+    "okf_library_unmount",
+    "okf_library_list",
+    "okf_library_catalog",
+    "okf_library_read",
+    "okf_library_query"
   ]);
   for (const tool of response.result.tools) assert.equal(tool.inputSchema.type, "object");
   assert.equal(response.result.cacheScope, "public");
