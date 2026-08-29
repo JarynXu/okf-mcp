@@ -84,7 +84,7 @@ export const tools = Object.freeze([
   {
     name: "okf_library_add",
     title: "Install OKF Library",
-    description: "Register/install a local-directory or Git-backed OKF Library.",
+    description: "Register/install a local-directory or Git-backed OKF Library. Provider declarations remain inert until explicitly authorized during mount.",
     inputSchema: closedObject({
       registry: registryProperty,
       source: { type: "string", minLength: 1 },
@@ -97,7 +97,7 @@ export const tools = Object.freeze([
   {
     name: "okf_library_update",
     title: "Update OKF Library",
-    description: "Refresh an installed Library source.",
+    description: "Refresh an installed Library source without silently granting new provider authority.",
     inputSchema: closedObject({ registry: registryProperty, id: { type: "string", minLength: 1 } }, ["id"]),
     annotations: mutate
   },
@@ -111,21 +111,30 @@ export const tools = Object.freeze([
   {
     name: "okf_library_mount",
     title: "Mount OKF Library",
-    description: "Mount an installed Library into the active global knowledge space.",
-    inputSchema: closedObject({ registry: registryProperty, id: { type: "string", minLength: 1 } }, ["id"]),
+    description: "Mount an installed Library. Provider kinds that may execute code, use the network, or resolve credentials must be explicitly reviewed and allowed.",
+    inputSchema: closedObject({
+      registry: registryProperty,
+      id: { type: "string", minLength: 1 },
+      allowProviders: {
+        type: "array",
+        items: { type: "string", minLength: 1 },
+        default: [],
+        description: "Reviewed provider deployment kinds to authorize, for example process or http."
+      }
+    }, ["id"]),
     annotations: mutate
   },
   {
     name: "okf_library_unmount",
     title: "Unmount OKF Library",
-    description: "Unmount a Library without uninstalling it.",
+    description: "Unmount a Library without uninstalling it or discarding persisted provider approvals.",
     inputSchema: closedObject({ registry: registryProperty, id: { type: "string", minLength: 1 } }, ["id"]),
     annotations: mutate
   },
   {
     name: "okf_library_list",
     title: "List OKF Libraries",
-    description: "List installed Libraries and mount state.",
+    description: "List installed Libraries, mount state, declared providers, and persisted provider approvals.",
     inputSchema: closedObject({ registry: registryProperty }),
     annotations: readOnly
   }
