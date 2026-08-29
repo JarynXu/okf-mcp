@@ -1,8 +1,8 @@
-# OKF MCP server
+# OKF MCP Server
 
-`okf-mcp` exposes read-only Open Knowledge Format operations over MCP stdio. It delegates bundle semantics to the native `okf` CLI and returns both text content and structured JSON.
+MCP adapter for Open Knowledge Format bundle and Library operations. The server delegates execution to the `okf` CLI and preserves structured JSON results rather than reimplementing OKF parsing, retrieval, registry, or Library runtime logic.
 
-## Tools
+## Core bundle tools
 
 - `okf_validate`
 - `okf_list`
@@ -11,27 +11,20 @@
 - `okf_search`
 - `okf_graph`
 
-## Configuration
+## Library tools
 
-```json
-{
-  "mcpServers": {
-    "okf": {
-      "command": "okf-mcp",
-      "env": {
-        "OKF_BUNDLE": "/absolute/path/to/knowledge",
-        "OKF_CLI_PATH": "/optional/path/to/okf"
-      }
-    }
-  }
-}
-```
+- `okf_library_add`
+- `okf_library_update`
+- `okf_library_remove`
+- `okf_library_mount`
+- `okf_library_unmount`
+- `okf_library_list`
+- `okf_library_catalog`
+- `okf_library_read`
+- `okf_library_query`
 
-The server supports the stable `2025-11-25` initialization flow and the `2026-07-28` discovery flow over newline-delimited JSON-RPC stdio. It writes protocol messages only to stdout and diagnostics only to stderr.
+Library tools use `OKF_REGISTRY` or `.okf/libraries.json` by default. They expose the same lifecycle, dynamic semantic catalog, canonical `okf://` read, and polymorphic query operations as the CLI.
 
-## Development
+`OKF_CLI_PATH` can point to a specific `okf` executable. `OKF_BUNDLE` selects the default core bundle directory.
 
-```bash
-npm ci
-npm run check
-```
+The MCP layer is intentionally an adapter: storage/provider semantics belong to the SDK/CLI Library Runtime, which lets future local, Git, S3, remote, virtual, and agent-backed providers share one MCP surface.
