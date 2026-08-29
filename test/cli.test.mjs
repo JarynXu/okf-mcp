@@ -21,6 +21,20 @@ test("builds stable CLI arguments", () => {
   assert.equal(invocation.args[3], "json");
 });
 
+test("builds Library CLI arguments with an explicit registry", () => {
+  const invocation = buildCliInvocation("okf_library_query", {
+    registry: "state/libraries.json",
+    query: "XCAP document selector",
+    library: "mcx",
+    limit: 5
+  }, { OKF_CLI_PATH: "custom-okf" });
+  assert.equal(invocation.executable, "custom-okf");
+  assert.ok(invocation.args.includes("--registry"));
+  assert.deepEqual(invocation.args.slice(-6), [
+    "library", "query", "XCAP document selector", "--library", "mcx", "--limit", "5"
+  ].slice(-6));
+});
+
 test("executes a CLI override and parses its envelope", { skip: process.platform === "win32" }, () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "okf-mcp-cli-"));
   const fake = path.join(directory, "okf");
