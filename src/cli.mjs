@@ -5,7 +5,8 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
   const bundle = path.resolve(args.bundle ?? environment.OKF_BUNDLE ?? process.cwd());
   const command = ["--bundle", bundle, "--output", "json"];
 
-  if (name.startsWith("okf_library_")) {
+  const usesRegistry = name.startsWith("okf_library_") || name === "okf_search" || name === "okf_get";
+  if (usesRegistry) {
     const registry = path.resolve(args.registry ?? environment.OKF_REGISTRY ?? path.join(process.cwd(), ".okf", "libraries.json"));
     command.push("--registry", registry);
   }
@@ -30,6 +31,7 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
     case "okf_search":
       command.push("search", requiredString(args, "query"));
       for (const tag of args.tags ?? []) command.push("--tag", String(tag));
+      if (args.library) command.push("--library", String(args.library));
       if (args.limit !== undefined) command.push("--limit", String(args.limit));
       break;
     case "okf_graph":
@@ -56,18 +58,6 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
       break;
     case "okf_library_list":
       command.push("library", "list");
-      break;
-    case "okf_library_catalog":
-      command.push("library", "catalog");
-      if (args.id) command.push(String(args.id));
-      break;
-    case "okf_library_read":
-      command.push("library", "read", requiredString(args, "uri"));
-      break;
-    case "okf_library_query":
-      command.push("library", "query", requiredString(args, "query"));
-      if (args.library) command.push("--library", String(args.library));
-      if (args.limit !== undefined) command.push("--limit", String(args.limit));
       break;
     default:
       throw new Error(`Unknown OKF tool: ${name}`);
