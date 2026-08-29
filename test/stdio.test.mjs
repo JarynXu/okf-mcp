@@ -19,5 +19,5 @@ test("stdio transport emits one compact JSON response per request line", async (
   });
   assert.equal(lines.length, 2);
   assert.equal(JSON.parse(lines[0]).id, 1);
-  assert.equal(JSON.parse(lines[1]).result.tools.length, 18);
+  assert.equal(JSON.parse(lines[1]).result.tools.length, 15);
 });

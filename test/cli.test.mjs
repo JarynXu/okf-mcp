@@ -35,16 +35,6 @@ test("builds Library CLI arguments with an explicit registry", () => {
   ].slice(-6));
 });
 
-test("builds Project Context CLI arguments with profile state", () => {
-  const invocation = buildCliInvocation("okf_project_checkpoint", {
-    projectContext: "state/project-context.json",
-    revision: "abc123"
-  }, { OKF_CLI_PATH: "custom-okf" });
-  assert.equal(invocation.executable, "custom-okf");
-  assert.ok(invocation.args.includes("--project-context"));
-  assert.deepEqual(invocation.args.slice(-4), ["project", "checkpoint", "--revision", "abc123"]);
-});
-
 test("executes a CLI override and parses its envelope", { skip: process.platform === "win32" }, () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "okf-mcp-cli-"));
   const fake = path.join(directory, "okf");

@@ -35,10 +35,7 @@ test("lists tools deterministically with valid object schemas", () => {
     "okf_library_list",
     "okf_library_catalog",
     "okf_library_read",
-    "okf_library_query",
-    "okf_project_init",
-    "okf_project_status",
-    "okf_project_checkpoint"
+    "okf_library_query"
   ]);
   for (const tool of response.result.tools) assert.equal(tool.inputSchema.type, "object");
   assert.equal(response.result.cacheScope, "public");
