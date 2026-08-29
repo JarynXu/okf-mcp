@@ -2,7 +2,9 @@
 
 MCP adapter for Open Knowledge Format bundle and Library operations. The server delegates execution to the `okf` CLI and preserves structured JSON results rather than reimplementing OKF parsing, retrieval, registry, or Library runtime logic.
 
-## Core bundle tools
+Mounted Libraries transparently extend the existing OKF knowledge tools. The MCP surface does not introduce separate Library retrieval tools.
+
+## Knowledge tools
 
 - `okf_validate`
 - `okf_list`
@@ -11,7 +13,9 @@ MCP adapter for Open Knowledge Format bundle and Library operations. The server 
 - `okf_search`
 - `okf_graph`
 
-## Library tools
+`okf_search` searches the active OKF knowledge space and may optionally scope to a Library. `okf_get` also accepts canonical `okf://<library>/<path>` URIs. Provider-specific lexical, semantic, graph, remote, or agentic retrieval remains an internal Runtime capability.
+
+## Library management tools
 
 - `okf_library_add`
 - `okf_library_update`
@@ -19,12 +23,9 @@ MCP adapter for Open Knowledge Format bundle and Library operations. The server 
 - `okf_library_mount`
 - `okf_library_unmount`
 - `okf_library_list`
-- `okf_library_catalog`
-- `okf_library_read`
-- `okf_library_query`
 
-Library tools use `OKF_REGISTRY` or `.okf/libraries.json` by default. They expose the same lifecycle, dynamic semantic catalog, canonical `okf://` read, and polymorphic query operations as the CLI.
+Library management uses `OKF_REGISTRY` or `.okf/libraries.json` by default. Mounting a Library changes the active knowledge space consumed by `okf_search`/`okf_get`; it does not require a different retrieval API.
 
-`OKF_CLI_PATH` can point to a specific `okf` executable. `OKF_BUNDLE` selects the default core bundle directory.
+`OKF_CLI_PATH` can point to a specific `okf` executable. `OKF_BUNDLE` selects the default bundle directory.
 
-The MCP layer is intentionally an adapter: storage/provider semantics belong to the SDK/CLI Library Runtime, which lets future local, Git, S3, remote, virtual, and agent-backed providers share one MCP surface.
+The MCP layer is intentionally domain-neutral and thin. Storage/provider semantics belong to the SDK/CLI Library Runtime, while application-specific actions belong to the concrete Library/application package rather than generic OKF MCP.
