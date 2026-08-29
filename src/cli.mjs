@@ -5,9 +5,14 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
   const bundle = path.resolve(args.bundle ?? environment.OKF_BUNDLE ?? process.cwd());
   const command = ["--bundle", bundle, "--output", "json"];
 
-  if (name.startsWith("okf_library_")) {
+  if (name.startsWith("okf_library_") || name === "okf_project_init") {
     const registry = path.resolve(args.registry ?? environment.OKF_REGISTRY ?? path.join(process.cwd(), ".okf", "libraries.json"));
     command.push("--registry", registry);
+  }
+
+  if (name.startsWith("okf_project_")) {
+    const projectContext = path.resolve(args.projectContext ?? environment.OKF_PROJECT_CONTEXT ?? path.join(process.cwd(), ".okf", "project-context.json"));
+    command.push("--project-context", projectContext);
   }
 
   switch (name) {
@@ -68,6 +73,20 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
       command.push("library", "query", requiredString(args, "query"));
       if (args.library) command.push("--library", String(args.library));
       if (args.limit !== undefined) command.push("--limit", String(args.limit));
+      break;
+    case "okf_project_init":
+      command.push("project", "init");
+      if (args.repository) command.push("--repository", String(args.repository));
+      if (args.project) command.push("--project", String(args.project));
+      if (args.id) command.push("--id", String(args.id));
+      if (args.force) command.push("--force");
+      break;
+    case "okf_project_status":
+      command.push("project", "status");
+      break;
+    case "okf_project_checkpoint":
+      command.push("project", "checkpoint");
+      if (args.revision) command.push("--revision", String(args.revision));
       break;
     default:
       throw new Error(`Unknown OKF tool: ${name}`);
