@@ -8,6 +8,11 @@ const registryProperty = {
   description: "Library registry path. Defaults to OKF_REGISTRY or .okf/libraries.json in the server working directory."
 };
 
+const projectContextProperty = {
+  type: "string",
+  description: "Project Context profile path. Defaults to OKF_PROJECT_CONTEXT or .okf/project-context.json in the server working directory."
+};
+
 const closedObject = (properties, required = []) => ({
   type: "object",
   properties,
@@ -148,5 +153,36 @@ export const tools = Object.freeze([
       limit: { type: "integer", minimum: 1, maximum: 1000, default: 20 }
     }, ["query"]),
     annotations: readOnly
+  },
+  {
+    name: "okf_project_init",
+    title: "Initialize Project Context Library",
+    description: "Bootstrap and mount a repository-bound Project Context Library scaffold.",
+    inputSchema: closedObject({
+      registry: registryProperty,
+      projectContext: projectContextProperty,
+      repository: { type: "string", minLength: 1 },
+      project: { type: "string", minLength: 1 },
+      id: { type: "string", minLength: 1 },
+      force: { type: "boolean", default: false }
+    }),
+    annotations: mutate
+  },
+  {
+    name: "okf_project_status",
+    title: "Get Project Context freshness",
+    description: "Compare the validated revision with repository HEAD and return recovery state, changed paths, and impacted topics.",
+    inputSchema: closedObject({ projectContext: projectContextProperty }),
+    annotations: readOnly
+  },
+  {
+    name: "okf_project_checkpoint",
+    title: "Advance Project Context checkpoint",
+    description: "Advance validated_revision only after the caller has completed required knowledge updates and project verification.",
+    inputSchema: closedObject({
+      projectContext: projectContextProperty,
+      revision: { type: "string", minLength: 1 }
+    }),
+    annotations: mutate
   }
 ]);
