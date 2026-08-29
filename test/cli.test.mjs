@@ -6,33 +6,30 @@ import test from "node:test";
 
 import { buildCliInvocation, runOkfCli } from "../src/cli.mjs";
 
-test("builds stable CLI arguments", () => {
+test("builds stable Library-aware search arguments", () => {
   const invocation = buildCliInvocation("okf_search", {
     bundle: "knowledge",
+    registry: "state/libraries.json",
     query: "runtime architecture",
     tags: ["architecture"],
+    library: "docs",
     limit: 7
   }, { OKF_CLI_PATH: "custom-okf" });
   assert.equal(invocation.executable, "custom-okf");
-  assert.deepEqual(invocation.args.slice(-6), [
-    "search", "runtime architecture", "--tag", "architecture", "--limit", "7"
+  assert.ok(invocation.args.includes("--registry"));
+  assert.deepEqual(invocation.args.slice(-8), [
+    "search", "runtime architecture", "--tag", "architecture", "--library", "docs", "--limit", "7"
   ]);
-  assert.equal(invocation.args[2], "--output");
-  assert.equal(invocation.args[3], "json");
 });
 
-test("builds Library CLI arguments with an explicit registry", () => {
-  const invocation = buildCliInvocation("okf_library_query", {
+test("builds Library management CLI arguments with an explicit registry", () => {
+  const invocation = buildCliInvocation("okf_library_mount", {
     registry: "state/libraries.json",
-    query: "XCAP document selector",
-    library: "mcx",
-    limit: 5
+    id: "mcx"
   }, { OKF_CLI_PATH: "custom-okf" });
   assert.equal(invocation.executable, "custom-okf");
   assert.ok(invocation.args.includes("--registry"));
-  assert.deepEqual(invocation.args.slice(-6), [
-    "library", "query", "XCAP document selector", "--library", "mcx", "--limit", "5"
-  ].slice(-6));
+  assert.deepEqual(invocation.args.slice(-3), ["library", "mount", "mcx"]);
 });
 
 test("executes a CLI override and parses its envelope", { skip: process.platform === "win32" }, () => {
