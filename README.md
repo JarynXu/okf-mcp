@@ -1,6 +1,6 @@
 # OKF MCP Server
 
-MCP adapter for Open Knowledge Format bundle and Library operations. The server delegates execution to the `okf` CLI and preserves structured JSON results rather than reimplementing OKF parsing, retrieval, registry, or Library runtime logic.
+MCP adapter for Open Knowledge Format bundle and Library operations. The server delegates execution to the `okf` CLI and preserves structured JSON results rather than reimplementing OKF parsing, retrieval, registry, provider routing, or Library runtime logic.
 
 Mounted Libraries transparently extend the existing OKF knowledge tools. The MCP surface does not introduce separate Library retrieval tools.
 
@@ -24,8 +24,25 @@ Mounted Libraries transparently extend the existing OKF knowledge tools. The MCP
 - `okf_library_unmount`
 - `okf_library_list`
 
-Library management uses `OKF_REGISTRY` or `.okf/libraries.json` by default. Mounting a Library changes the active knowledge space consumed by `okf_search`/`okf_get`; it does not require a different retrieval API.
+Library management uses `OKF_REGISTRY` or `.okf/libraries.json` by default. Mounting changes the active knowledge space consumed by `okf_search` and `okf_get`; it does not require a different retrieval API.
+
+Provider deployment declarations remain inert when a Library is installed or updated. Review any provider that can execute code, use the network, access a database or object store, resolve credentials, or delegate retrieval to an Agent. Explicitly authorize only the reviewed provider kinds when mounting:
+
+```json
+{
+  "id": "project-context",
+  "allowProviders": ["process"]
+}
+```
+
+This maps to:
+
+```text
+okf library mount project-context --allow-provider process
+```
+
+Multiple reviewed kinds may be passed in `allowProviders`. The CLI persists approvals in the local Runtime registry. MCP itself does not grant additional process, network, credential, write, or maintenance authority.
 
 `OKF_CLI_PATH` can point to a specific `okf` executable. `OKF_BUNDLE` selects the default bundle directory.
 
-The MCP layer is intentionally domain-neutral and thin. Storage/provider semantics belong to the SDK/CLI Library Runtime, while application-specific actions belong to the concrete Library/application package rather than generic OKF MCP.
+The MCP layer is intentionally domain-neutral and thin. Storage and provider semantics belong to the SDK/CLI Library Runtime, while application-specific actions and skills belong to each concrete Library/application package rather than generic OKF MCP.
