@@ -52,6 +52,7 @@ export function buildCliInvocation(name, args = {}, environment = process.env) {
       break;
     case "okf_library_mount":
       command.push("library", "mount", requiredString(args, "id"));
+      for (const kind of args.allowProviders ?? []) command.push("--allow-provider", String(kind));
       break;
     case "okf_library_unmount":
       command.push("library", "unmount", requiredString(args, "id"));

@@ -1,7 +1,7 @@
 {
   "name": "@open-knowledge-stack/okf-mcp",
-  "version": "0.1.0-alpha.1",
-  "description": "MCP stdio server for Open Knowledge Format bundles",
+  "version": "0.2.0-alpha.1",
+  "description": "MCP stdio server for Open Knowledge Format bundles and pluggable Libraries",
   "license": "Apache-2.0",
   "type": "module",
   "bin": { "okf-mcp": "src/server.mjs" },
